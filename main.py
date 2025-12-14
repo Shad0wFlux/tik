@@ -26,7 +26,7 @@ first_reports = [
     }
 ]
 
-# القائمة الثانية للبلاغات بعد تغيير VPN
+# القائمة الثانية للبلاغات بعد VPN
 second_reports = [
     {
         "code": "[\"selling_or_promoting_restricted_items-drugs-high-risk\"]",
@@ -82,30 +82,35 @@ headers = {
 }
 
 def show_menu():
-    print("\nثغره كارتنس")
-    print("\nاختر طريقة الإبلاغ:")
-    print("1. الإبلاغ العادي (من حساب واحد)")
-    print("2. الإبلاغ المتعدد (من عدة حسابات)")
+    print("\n" + "=" * 75)
+    print("Instagram Reporting System")
+    print("=" * 75)
+    print("\nChoose reporting mode:")
+    print("1. Normal Reporting (from single account)")
+    print("2. Multi-Account Reporting (from multiple accounts)")
+    print("=" * 75)
     
     while True:
-        choice = input("\nأدخل اختيارك (1 أو 2): ").strip()
+        choice = input("\nEnter your choice (1 or 2): ").strip()
         if choice in ['1', '2']:
             return int(choice)
-        print("اختيار غير صحيح. الرجاء إدخال 1 أو 2.")
+        print("Invalid choice. Please enter 1 or 2.")
 
 def get_sleep_time():
-    print("\nإعدادات الوقت بين البلاغات")
-    print("أدخل المدة بالثواني بين كل بلاغ وآخر.")
-    print("يُوصى بـ 2-5 ثواني لتجنب الاكتشاف")
+    print("\n" + "-" * 75)
+    print("Sleep Time Configuration")
+    print("-" * 75)
+    print("Enter the delay (in seconds) between each report.")
+    print("Recommended: 2-5 seconds to avoid detection")
     
     while True:
         try:
-            sleep_time = int(input("\nأدخل الوقت بين البلاغات (بالثواني): ").strip())
+            sleep_time = int(input("\nEnter sleep time (seconds): ").strip())
             if sleep_time >= 0:
                 return sleep_time
-            print("الرجاء إدخال رقم موجب أو 0 لعدم وجود تأخير.")
+            print("Please enter a positive number or 0 for no delay.")
         except ValueError:
-            print("الرجاء إدخال رقم صحيح.")
+            print("Please enter a valid number.")
 
 def get_context(user_id, cookies):
     nok = {
@@ -137,15 +142,15 @@ def send_report(report_data, user_id, cookies, step_num, total_steps, phase_num,
     report_code = report_data["code"]
     report_name = report_data["name"]
     
-    print(f"\nالمرحلة {phase_num} - البلاغ {step_num}/{total_steps}: {report_name}")
-    print("-" * 50)
+    print(f"\nPhase {phase_num} - Report {step_num}/{total_steps}: {report_name}")
+    print("-" * 75)
     
     time.sleep(1)
     
     context = get_context(user_id, cookies)
     
     if not context:
-        print("فشل: تعذر الحصول على السياق")
+        print("Failed: Could not get context")
         return False
     
     payload = {
@@ -164,17 +169,19 @@ def send_report(report_data, user_id, cookies, step_num, total_steps, phase_num,
         response = requests.post(url, data=payload, headers=headers, cookies=cookies, timeout=10)
         
         if response.status_code == 200:
-            print("الحالة: ناجح")
+            print("Status: Success")
             return True
         else:
-            print(f"الحالة: فشل ({response.status_code})")
+            print(f"Status: Failed ({response.status_code})")
             return False
     except Exception as e:
-        print(f"خطأ: {e}")
+        print(f"Error: {e}")
         return False
 
 def send_reports_list(reports_list, user_id, cookies, phase_name, phase_num, sleep_time):
-    print(f"\n{phase_name}")
+    print(f"\n" + "=" * 75)
+    print(f"{phase_name}")
+    print("=" * 75)
     
     successful = 0
     total = len(reports_list)
@@ -184,24 +191,29 @@ def send_reports_list(reports_list, user_id, cookies, phase_name, phase_num, sle
             successful += 1
         
         if i < total and sleep_time > 0:
-            print(f"\nانتظار {sleep_time} ثانية قبل البلاغ التالي...")
+            print(f"\nWaiting {sleep_time} seconds before next report...")
             time.sleep(sleep_time)
     
-    print(f"\nاكتملت المرحلة {phase_num}: {successful}/{total} بلاغ")
+    print(f"\nPhase {phase_num} completed: {successful}/{total} reports")
     return successful
 
 def normal_reporting():
-    print("\nوضع الإبلاغ العادي")
+    print("\n" + "=" * 75)
+    print("Normal Reporting Mode")
+    print("=" * 75)
     
-    user_id = input("\nأدخل معرف المستهدف: ").strip()
-    session_id = input("أدخل معرف الجلسة: ").strip()
+    user_id = input("\nEnter target user ID: ").strip()
+    session_id = input("Enter session ID: ").strip()
     sleep_time = get_sleep_time()
     
-    print("\nالرجاء تشغيل VPN الآن")
-    print("اضغط Enter عندما يكون VPN نشطاً")
+    print("\n" + "-" * 75)
+    print("Please enable VPN now")
+    print("Press ENTER when VPN is active")
     input()
     
-    print("\nجاري تهيئة النظام...")
+    print("\n" + "-" * 75)
+    print("Initializing system...")
+    print("-" * 75)
     
     cookies = {
         'datr': 't2_paGIejmErDTIjIjwWF7gG',
@@ -218,33 +230,42 @@ def normal_reporting():
         'rur': '"RVA\\05476486059622\\0541791670864:01fe3167f0753030cebb866598515e7ba79f9e395da4160195b582c2ab2f4272410b88ee"'
     }
     
-    
-    print("\nبدء المرحلة الأولى: أول 5 بلاغات")
+    # Phase 1
+    print("\n" + "=" * 75)
+    print("Starting Phase 1: First 5 Reports")
+    print("=" * 75)
     
     phase1_success = send_reports_list(first_reports, user_id, cookies, 
-                                      "المرحلة الأولى: أول 5 بلاغات", 1, sleep_time)
+                                      "Phase 1: First 5 Reports", 1, sleep_time)
     
-    
-    print("\nمطلوب تغيير VPN")
-    print("الرجاء تغيير خادم VPN الآن")
-    print("اضغط Enter عند تغيير VPN")
+    # VPN Change
+    print("\n" + "=" * 75)
+    print("Change VPN Required")
+    print("=" * 75)
+    print("Please change your VPN server now")
+    print("Press ENTER when VPN is changed")
     input()
     
-    
-    print("\nبدء المرحلة الثانية: 6 بلاغات إضافية")
+    # Phase 2
+    print("\n" + "=" * 75)
+    print("Starting Phase 2: Next 6 Reports")
+    print("=" * 75)
     
     phase2_success = send_reports_list(second_reports, user_id, cookies,
-                                      , 2, sleep_time)
+                                      "Phase 2: Next 6 Reports", 2, sleep_time)
     
-    
-    print("\nاكتملت العملية")
-    print(f"المرحلة الأولى (البلاغات 1-5): {phase1_success}/{len(first_reports)}")
-    print(f"المرحلة الثانية (البلاغات 6-11): {phase2_success}/{len(second_reports)}")
-    print(f"الإجمالي (جميع البلاغات 11): {phase1_success + phase2_success}/{len(first_reports) + len(second_reports)}")
-    print(f"الوقت المستخدم بين البلاغات: {sleep_time} ثانية")
+    # Summary
+    print("\n" + "=" * 75)
+    print("Operation Complete")
+    print("=" * 75)
+    print(f"Phase 1 (Reports 1-5): {phase1_success}/{len(first_reports)}")
+    print(f"Phase 2 (Reports 6-11): {phase2_success}/{len(second_reports)}")
+    print(f"Total (All 11 Reports): {phase1_success + phase2_success}/{len(first_reports) + len(second_reports)}")
+    print(f"Sleep time used: {sleep_time} seconds")
+    print("=" * 75)
 
 def validate_session(session_id):
-    """التحقق من صلاحية معرف الجلسة"""
+    """Validate if a session ID is working"""
     test_cookies = {
         'sessionid': session_id,
         'csrftoken': 'FxCF6jR5tSy3wdcZCfRIZN5viVxZmV1k'
@@ -262,15 +283,19 @@ def validate_session(session_id):
         return False
 
 def multi_account_reporting():
-    print("\nوضع الإبلاغ المتعدد من عدة حسابات")
+    print("\n" + "=" * 75)
+    print("Multi-Account Reporting Mode")
+    print("=" * 75)
     
-    user_id = input("\nأدخل معرف المستهدف: ").strip()
+    user_id = input("\nEnter target user ID: ").strip()
     
-    print("\nأدخل معرفات الجلسات (واحد لكل سطر)")
-    print("مثال:")
-    print("23375113665%3AQ52........")
-    print("78030994619%RJG%......")
-    print(" اضغط Enter  مرتين عند الانتهاء")
+    print("\n" + "-" * 75)
+    print("Enter session IDs (one per line)")
+    print("Example:")
+    print("23375113665%3AQ52ClMV9J0Q7cw%3A20%3AAYieo0QWoqPKwEe8RJY9EHci9epYVuLdxXSUo3Yc1Q")
+    print("78030994619%3AE8HxHqha7KPRJG%3A15%3AAYjFLxPzV56QRsybR4sOnXIjIieD36SrLMhrkQs2Hg")
+    print("-" * 75)
+    print("Press Enter twice when finished")
     
     sessions = []
     while True:
@@ -279,37 +304,43 @@ def multi_account_reporting():
             if sessions:
                 break
             else:
-                print("الرجاء إدخال معرف جلسة واحد على الأقل")
+                print("Please enter at least one session ID")
                 continue
         sessions.append(session)
     
     sleep_time = get_sleep_time()
     
-    # التحقق من الجلسات
-    print("\nجاري التحقق من الجلسات...")
+    # Validate sessions
+    print("\n" + "-" * 75)
+    print("Validating sessions...")
+    print("-" * 75)
     
     valid_sessions = []
     for i, session in enumerate(sessions, 1):
-        print(f"جاري التحقق من الجلسة {i}/{len(sessions)}... ", end="")
+        print(f"Checking session {i}/{len(sessions)}... ", end="")
         if validate_session(session):
-            print("صالحة")
+            print("VALID")
             valid_sessions.append(session)
         else:
-            print("غير صالحة")
+            print("INVALID")
     
-    print(f"\nالجلسات الصالحة: {len(valid_sessions)}/{len(sessions)}")
+    print(f"\nValid sessions: {len(valid_sessions)}/{len(sessions)}")
     
     if not valid_sessions:
-        print("لم يتم العثور على جلسات صالحة. جاري الخروج.")
+        print("No valid sessions found. Exiting.")
         return
     
-    print(f"\nبدء الإبلاغ من {len(valid_sessions)} حساب")
+    print("\n" + "=" * 75)
+    print(f"Starting reporting from {len(valid_sessions)} accounts")
+    print("=" * 75)
     
     total_reports_sent = 0
     total_accounts_used = 0
     
     for account_num, session_id in enumerate(valid_sessions, 1):
-        print(f"\nالحساب {account_num}/{len(valid_sessions)}")
+        print(f"\n" + "=" * 75)
+        print(f"Account {account_num}/{len(valid_sessions)}")
+        print("=" * 75)
         
         cookies = {
             'datr': 't2_paGIejmErDTIjIjwWF7gG',
@@ -326,44 +357,55 @@ def multi_account_reporting():
             'rur': '"RVA\\05476486059622\\0541791670864:01fe3167f0753030cebb866598515e7ba79f9e395da4160195b582c2ab2f4272410b88ee"'
         }
         
-        print("\nالرجاء تشغيل VPN الآن")
-        print("اضغط Enter عندما يكون VPN نشطاً")
+        print("\nPlease enable VPN now")
+        print("Press ENTER when VPN is active")
         input()
         
-        
-        print(f"\nالحساب {account_num}: بدء المرحلة الأولى")
+        # Phase 1 for this account
+        print("\n" + "=" * 75)
+        print(f"Account {account_num}: Starting Phase 1")
+        print("=" * 75)
         
         phase1_success = send_reports_list(first_reports, user_id, cookies,
-                                          f"الحساب {account_num} - المرحلة الأولى", 1, sleep_time)
+                                          f"Account {account_num} - Phase 1", 1, sleep_time)
         
-        
-        print("\nمطلوب تغيير VPN")
-        print("الرجاء تغيير خادم VPN الآن")
-        print("اضغط Enter عند تغيير VPN")
+        # VPN Change for this account
+        print("\n" + "=" * 75)
+        print("Change VPN Required")
+        print("=" * 75)
+        print("Please change your VPN server now")
+        print("Press ENTER when VPN is changed")
         input()
         
-        
-        print(f"\nالحساب {account_num}: بدء المرحلة الثانية")
+        # Phase 2 for this account
+        print("\n" + "=" * 75)
+        print(f"Account {account_num}: Starting Phase 2")
+        print("=" * 75)
         
         phase2_success = send_reports_list(second_reports, user_id, cookies,
-                                          f"الحساب {account_num} - المرحلة الثانية", 2, sleep_time)
+                                          f"Account {account_num} - Phase 2", 2, sleep_time)
         
         total_reports_sent += (phase1_success + phase2_success)
         total_accounts_used += 1
         
-        print(f"\nاكتمل الحساب {account_num}: {phase1_success + phase2_success}/11 بلاغ")
+        print(f"\nAccount {account_num} completed: {phase1_success + phase2_success}/11 reports")
         
-        
+        # Delay between accounts
         if account_num < len(valid_sessions):
-            print(f"\nجاري التحضير للحساب التالي خلال 5 ثواني...")
+            print(f"\n" + "-" * 75)
+            print(f"Preparing next account in 5 seconds...")
+            print("-" * 75)
             time.sleep(5)
     
-    
-    print("\nاكتملت عملية الإبلاغ المتعدد")
-    print(f"الحسابات المستخدمة: {total_accounts_used}/{len(valid_sessions)}")
-    print(f"إجمالي البلاغات المرسلة: {total_reports_sent}")
-    print(f"الحد الأقصى الممكن للبلاغات: {len(valid_sessions) * 11}")
-    print(f"الوقت المستخدم بين البلاغات: {sleep_time} ثانية")
+    # Final Summary
+    print("\n" + "=" * 75)
+    print("Multi-Account Operation Complete")
+    print("=" * 75)
+    print(f"Accounts used: {total_accounts_used}/{len(valid_sessions)}")
+    print(f"Total reports sent: {total_reports_sent}")
+    print(f"Maximum possible reports: {len(valid_sessions) * 11}")
+    print(f"Sleep time used: {sleep_time} seconds")
+    print("=" * 75)
 
 def main():
     choice = show_menu()
@@ -377,6 +419,6 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n\nتم إلغاء العملية من قبل المستخدم.")
+        print("\n\nOperation cancelled by user.")
     except Exception as e:
-        print(f"\n\nحدث خطأ: {e}")
+        print(f"\n\nAn error occurred: {e}")
